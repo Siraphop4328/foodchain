@@ -2,10 +2,11 @@ let weedEaterArray = [];
 let weedArray = [];
 
 let simTime = 0;
+let day = simTime / 60;
 
 let endGameTime = 0;
 let showSimTime = true;
-let nextHerbId = 10;
+let nextHerbId = 25;
 
 /// Map
 
@@ -14,6 +15,10 @@ let scl = 0.05;
 
 let mapLayer;
 
+let waterTiles = [];
+
+
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   rectMode(CORNER);
@@ -21,13 +26,25 @@ function setup() {
   frameRate(60);
 
   for (let i = 0; i < 4; i++) {
+    
     weedEaterArray.push(new Herbivore(random(0, width - 200), random(0, height), 10, 10, 1, i));
   }
 
-  for (let i = 0; i < 25; i++) {
+  let placed = 0;
+let tries = 0;  
+
+  while(placed < 25 && tries < 5000) {
+    tries++
     let p = randomGreenPos();
-    weedArray.push(new Herb(p.x, p.y, 10, i));
+    if(!isOccupied(p.x, p.y)){
+      weedArray.push(new Herb(p.x, p.y, 10, nextHerbId++));
+      placed++;
+
+    }
   }
+ 
+    
+  
 
 
 
@@ -47,6 +64,8 @@ mapLayer.strokeWeight(0.1);
     mapLayer.rect(i * tileSize, j * tileSize, tileSize, tileSize);
   }
 }
+
+buildWaterTiles();
 
   }
 
@@ -93,7 +112,8 @@ function draw() {
   for (let i = 0; i < weedEaterArray.length; i++) {
     text(weedEaterArray[i].id + " age: " + nf(weedEaterArray[i].age, 0, 1), width - 170,
         100 + 20 * i);
-    text(weedEaterArray[i].hunger, width - 80, 100 + 20 * i);
+    text(floor(weedEaterArray[i].hunger), width - 80, 100 + 20 * i);
+    text(floor(weedEaterArray[i].thirst), width - 80, 200 + 20 * i);
   }
 
   // Spawn Herbs
@@ -110,13 +130,36 @@ function draw() {
     let eater = weedEaterArray[i];
     eater.spawn();
 
-    // Move Herbivores herb
+
+
+
+
+    if(eater.hunger > eater.thirst) {
+      if(weedArray.length > 0){
+        let closest = eater.findClosestHerb(weedArray);
+        if(closest != null) eater.moveToTarget(closest.x, closest.y);
+      }
+    }
+    else{
+      let water = findClosestWater(eater.x, eater.y);
+      if(water != null) eater.moveToTarget(water.x, water.y);
+    }
+
+    if(isWater(eater.x, eater.y)){
+      eater.lastDrinkTime = simTime;
+    }
+
+    /*// Move Herbivores herb
     if (weedArray.length > 0) {
       let closest = eater.findClosestHerb(weedArray);
       if (closest != null) {
         eater.moveToTarget(closest.x, closest.y);
       }
     }
+      */
+
+
+    
 
     // Check Collisions
     for (let j = weedArray.length - 1; j >= 0; j--) {
@@ -126,7 +169,7 @@ function draw() {
         console.log("Eater " + eater.id + " ate Herb " + currentHerb.id);
 
         weedArray.splice(j, 1);
-        eater.lastEatTime = min(simTime, eater.lastEatTime + 10);
+        eater.lastEatTime = min(simTime, eater.lastEatTime + 2);
       }
     }
 
@@ -154,7 +197,7 @@ function getColor(x, y){
   if(v < 0.4) {
     return color(204, 255, 255);
   } 
-  else if(v < 0.5) {
+  else if(v < 0.47) {
     return color(61, 255, 150);
   }
   else if(v < 0.7) {
@@ -171,7 +214,11 @@ function getNoise(px, py) {
 
 function isGreen(px, py) {
   let v = getNoise(px, py);
-  return v >= 0.5 && v <= 0.7;
+  return v >= 0.47 && v <= 0.7;
+}
+
+function isWater(px, py) {
+  return getNoise(px, py) < 0.4;
 }
 
 function randomGreenPos(){
@@ -189,4 +236,33 @@ function snapToTileCenter(px, py) {
     floor(py / tileSize) * tileSize + tileSize / 2
     
   );
+}
+
+function buildWaterTiles(){
+  for(let i = 0; i < width / tileSize; i++ ){
+    for(let j = 0; j < height / tileSize; j++){
+      if (noise(i * scl, j * scl) < 0.4){
+        waterTiles.push(createVector(i * tileSize + tileSize / 2, j * tileSize + tileSize / 2 ));
+      }
+    }
+  }
+}
+
+function findClosestWater(x, y) {
+  let closest = null;
+  let record = Infinity;
+  for(let w of waterTiles) {
+    let d = dist(x, y, w.x, w.y);
+    if(d < record) {
+      record = d;
+      closest = w;
+    }
+  }
+  return closest;
+}
+
+function isOccupied(x, y){
+  let tx = floor(x / tileSize);
+  let ty = floor(y / tileSize);
+  return weedArray.some(h => floor(h.x / tileSize) === tx && floor(h.y / tileSize) === ty);
 }

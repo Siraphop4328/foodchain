@@ -7,20 +7,22 @@ class Herb {
     this.age = 0
     this.birthTime = simTime;
     this.lastRegrowAge = 0;
+    this.regrowInterval = random(5, 15);
   }
 
   spawn() {
     push();
     rectMode(CENTER);
-    strokeWeight(0.2);
+    noStroke();
     fill(120, 255, 100);
     rect(this.x, this.y, this.startSize);
     pop();
   }
 
   regrow(){
-    if(this.age - this.lastRegrowAge >= 10){
+    if(this.age - this.lastRegrowAge >= this.regrowInterval){
       this.lastRegrowAge = this.age;
+      this.regrowInterval = random(5, 15);
       
 
 
@@ -31,8 +33,11 @@ class Herb {
 
         if(isGreen(nx, ny)) {
           let p = snapToTileCenter(nx, ny);
+          if(!isOccupied(p.x, p.y)){
 
-          weedArray.push(new Herb(p.x, p.y, 10, nextHerbId++));
+            weedArray.push(new Herb(p.x, p.y, 10, nextHerbId++));
+          }
+
         }
       
     }
