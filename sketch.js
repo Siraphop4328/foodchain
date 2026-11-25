@@ -22,6 +22,8 @@ function setup() {
   }
 }
 
+let nextHerbId = 10;
+
 function draw() {
   background(255);
 
@@ -29,7 +31,7 @@ function draw() {
   // Make UI
   rectMode(CORNER);
   fill(0);
-  rect(width - 180, 0, 1000);
+  rect(width - 180, 0, 2000);
   fill(255);
   textSize(16);
   if (checkEndGame() && showSimTime) {
@@ -57,7 +59,10 @@ function draw() {
 
   // Spawn Herbs
   rectMode(CENTER);
-  for (let i = 0; i < weedArray.length; i++) {
+  let herbCount = weedArray.length;
+  for (let i = 0; i < herbCount; i++) {
+    weedArray[i].update();
+    weedArray[i].regrow();
     weedArray[i].spawn();
   }
 
@@ -131,7 +136,7 @@ class Herbivore {
   }
 
   checkDeath() {
-    return this.age >= 60 || this.hunger >= 10;
+    this.hunger >= 100;
   }
 
   findClosestHerb(herbs) {
@@ -157,6 +162,7 @@ class Herb {
     this.startSize = startSize;
     this.age = 0
     this.birthTime = simTime;
+    this.lastRegrowAge = 0;
   }
 
   spawn() {
@@ -165,11 +171,13 @@ class Herb {
   }
 
   regrow(){
-    if(this.age % 10 == 0){
+    if(this.age - this.lastRegrowAge >= 10){
+      this.lastRegrowAge = this.age;
       fill(0,200,0);
-    for(let i = 0; i < 2 ; i++){
-      weedArray.push(new Herb(random(this.x - 50, this.x + 50), random(this.y - 50, this.y - 50), 10, 10));
-      rect(this.x, this.y, this.startSize);
+
+      for(let i = 0; i < 2 ; i++){
+        weedArray.push(new Herb(random(this.x - 100, this.x + 100), random(this.y - 100, this.y + 100), 10, nextHerbId++));
+      
     }
     
   }
