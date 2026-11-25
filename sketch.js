@@ -1,26 +1,39 @@
 let weedEaterArray = [];
 let weedArray = [];
 
+let simTime = 0;
+
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(windowWidth, windowHeight);
   rectMode(CENTER);
   frameRate(60);
 
   for (let i = 0; i < 4; i++) {
     weedEaterArray.push(
-      new Herbivore(random(0, 400), random(0, 400), 10, 10, 1, i)
+      new Herbivore(random(0, width - 200), random(0, height), 10, 10, 1, i)
     );
   }
 
   for (i = 0; i < 100; i++) {
-    weedArray.push(new Herb(random(0, 400), random(0, 400), 10, i));
+    weedArray.push(new Herb(random(0, width - 200), random(0, height), 10, i));
   }
 }
 
 function draw() {
   background(255);
 
+  simTime = millis() / 1000;
+
+  // Make UI
+  rectMode(CORNER);
+  fill(0);
+  rect(width - 180, 0, 1000);
+  fill(255);
+  textSize(16);
+  text("sim time: " + nf(simTime, 0, 2) + " s", width - 170, 20);
+
   // Spawn Herbs
+  rectMode(CENTER);
   for (let i = 0; i < weedArray.length; i++) {
     weedArray[i].spawn();
   }
@@ -60,6 +73,7 @@ class Herbivore {
     this.r2 = r2;
     this.speed = speed;
     this.age = 0;
+    this.hunger = 0;
   }
 
   spawn() {
