@@ -6,43 +6,48 @@ function setup() {
   rectMode(CENTER);
   frameRate(60);
 
-  weedEaterArray.push(new Herbivore(100, 100, 10, 10, 1));
-  weedEaterArray.push(new Herbivore(120, 200, 10, 10, 1));
+  weedEaterArray.push(new Herbivore(100, 100, 10, 10, 1, 0));
+  weedEaterArray.push(new Herbivore(120, 200, 10, 10, 1, 1));
 
-  weedArray.push(new Herb(random(0, 400), random(0, 400), 10));
+  for (i = 0; i < 5; i++) {
+    weedArray.push(new Herb(random(0, 400), random(0, 400), 10, i));
+  }
 }
 
 function draw() {
   background(255);
 
-  let targetHerb = weedArray[0];
-  
-
-  for (i = 0; i < weedEaterArray.length; i++) {
-    weedEaterArray[i].spawn();
+  // Spawn Herbs
+  for (let i = 0; i < weedArray.length; i++) {
+    weedArray[i].spawn();
   }
 
-  if (weedArray.length > 0) {
-    for (i = 0; i < weedEaterArray.length; i++) {
+  // Spawn Herbivores
+  for (let i = 0; i < weedEaterArray.length; i++) {
+    let eater = weedEaterArray[i];
+    eater.spawn();
 
-      let eater = weedEaterArray[i];
-      weedEaterArray[i].moveToTarget(targetHerb.x, targetHerb.y);
-
-      weedArray[0].spawn();
-
-      if (checkCollision(targetHerb.x, targetHerb.y, eater.x, eater.y)) {
-      weedArray.splice(0, 1);
-      console.log("eaten");
-      weedArray.push(new Herb(random(0, 400), random(0, 400), 10));
-    }
+    // Move Herbivores herb
+    if (weedArray.length > 0) {
+      eater.moveToTarget(weedArray[0].x, weedArray[0].y);
     }
 
-    
+    // Check Collisions
+    for (let j = weedArray.length - 1; j >= 0; j--) {
+      let currentHerb = weedArray[j];
+
+      if (checkCollision(eater.x, eater.y, currentHerb.x, currentHerb.y)) {
+        console.log("Eater " + eater.id + " ate Herb " + currentHerb.id);
+
+        weedArray.splice(j, 1);
+      }
+    }
   }
 }
 
 class Herbivore {
-  constructor(startX, startY, r1, r2, speed) {
+  constructor(startX, startY, r1, r2, speed, id) {
+    this.id = id;
     this.x = startX;
     this.y = startY;
     this.r1 = r1;
@@ -52,6 +57,7 @@ class Herbivore {
   }
 
   spawn() {
+    fill(255);
     ellipse(this.x, this.y, this.r1 * 2, this.r2 * 2);
   }
   moveToTarget(targetX, targetY) {
@@ -67,13 +73,15 @@ class Herbivore {
 }
 
 class Herb {
-  constructor(startX, startY, startSize) {
+  constructor(startX, startY, startSize, id) {
+    this.id = id;
     this.x = startX;
     this.y = startY;
     this.startSize = startSize;
   }
 
   spawn() {
+    fill(0, 200, 0);
     rect(this.x, this.y, this.startSize);
   }
 }
