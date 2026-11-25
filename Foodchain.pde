@@ -6,8 +6,11 @@ function setup() {
   rectMode(CENTER);
   frameRate(60);
 
-  weedEaterArray.push(new Herbivore(100, 100, 10, 10, 1, 0));
-  weedEaterArray.push(new Herbivore(120, 200, 10, 10, 1, 1));
+  for (let i = 0; i < 4; i++) {
+    weedEaterArray.push(
+      new Herbivore(random(0, 400), random(0, 400), 10, 10, 1, i)
+    );
+  }
 
   for (i = 0; i < 100; i++) {
     weedArray.push(new Herb(random(0, 400), random(0, 400), 10, i));
@@ -30,10 +33,9 @@ function draw() {
     // Move Herbivores herb
     if (weedArray.length > 0) {
       let closest = eater.findClosestHerb(weedArray);
-      if(closest != null){
-        eater.moveToTarget(closest.x, closest.y)
+      if (closest != null) {
+        eater.moveToTarget(closest.x, closest.y);
       }
-      
     }
 
     // Check Collisions
@@ -73,22 +75,20 @@ class Herbivore {
       this.x += (dx / d) * this.speed;
       this.y += (dy / d) * this.speed;
     }
-    
   }
 
-  findClosestHerb(herbs){
+  findClosestHerb(herbs) {
     let closestHerb = null;
     let recordDistance = Infinity;
 
-    for(let i = 0; i < herbs.length; i++){
-      let d = dist(this.x, this.y, herbs[i].x, herbs[i].y,)
-      if(d < recordDistance){
+    for (let i = 0; i < herbs.length; i++) {
+      let d = dist(this.x, this.y, herbs[i].x, herbs[i].y);
+      if (d < recordDistance) {
         recordDistance = d;
         closestHerb = herbs[i];
       }
     }
     return closestHerb;
-    
   }
 }
 
