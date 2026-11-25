@@ -155,11 +155,29 @@ class Herb {
     this.x = startX;
     this.y = startY;
     this.startSize = startSize;
+    this.age = 0
+    this.birthTime = simTime;
   }
 
   spawn() {
     fill(0, 200, 0);
     rect(this.x, this.y, this.startSize);
+  }
+
+  regrow(){
+    if(this.age % 10 == 0){
+      fill(0,200,0);
+    for(let i = 0; i < 2 ; i++){
+      weedArray.push(new Herb(random(this.x - 50, this.x + 50), random(this.y - 50, this.y - 50), 10, 10));
+      rect(this.x, this.y, this.startSize);
+    }
+    
+  }
+
+    }
+    
+  update(){
+    this.age = simTime - this.birthTime;
   }
 }
 
