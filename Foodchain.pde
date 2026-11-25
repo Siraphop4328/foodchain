@@ -16,7 +16,7 @@ function draw() {
   background(255);
 
   let targetHerb = weedArray[0];
-  let eater = weedEaterArray[0];
+  
 
   for (i = 0; i < weedEaterArray.length; i++) {
     weedEaterArray[i].spawn();
@@ -24,16 +24,20 @@ function draw() {
 
   if (weedArray.length > 0) {
     for (i = 0; i < weedEaterArray.length; i++) {
+
+      let eater = weedEaterArray[i];
       weedEaterArray[i].moveToTarget(targetHerb.x, targetHerb.y);
 
       weedArray[0].spawn();
-    }
 
-    if (checkCollision(targetHerb.x, targetHerb.y, eater.x, eater.y)) {
+      if (checkCollision(targetHerb.x, targetHerb.y, eater.x, eater.y)) {
       weedArray.splice(0, 1);
       console.log("eaten");
       weedArray.push(new Herb(random(0, 400), random(0, 400), 10));
     }
+    }
+
+    
   }
 }
 
