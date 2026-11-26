@@ -17,23 +17,26 @@ class Herbivore {
     this.thirstRate = 2;
     this.horny = 0;
     this.lastHornyTime = simTime;
-    
   }
 
   spawn() {
-
     let scaleFactorSize = map(this.hunger, 0, 100, 1, 0.2);
     scaleFactorSize = constrain(scaleFactorSize, 0.2, 1);
 
     let cowColor = map(this.thirst, 0, 100, 255, 0);
-    
-
-    
 
     this.r2 = this.baseR2 * scaleFactorSize;
     this.color = cowColor;
 
-    fill(cowColor);
+    if (
+      this.horny > this.thirst &&
+      this.horny >= this.hunger &&
+      this.age > 10
+    ) {
+      fill(319, 255, 255);
+    } else {
+      fill(cowColor);
+    }
     ellipse(this.x, this.y, this.r1 * 2, this.r2 * 2);
   }
   moveToTarget(targetX, targetY) {
@@ -51,7 +54,7 @@ class Herbivore {
     this.age = simTime - this.birthTime;
     this.hunger = simTime - this.lastEatTime;
     this.thirst = (simTime - this.lastDrinkTime) * this.thirstRate;
-    this.horny = simTime - this.lastHornyTime;
+    this.horny = (simTime - this.lastHornyTime) * 0.75;
   }
 
   checkDeath() {
@@ -72,8 +75,18 @@ class Herbivore {
     return closestHerb;
   }
 
-  reProduce(){
-    
+  findClosestHerbivore(herbivore) {
+    let closestHerbivore = null;
+    let recordDistance = Infinity;
+
+    for (let i = 0; i < herbivore.length; i++) {
+      if (herbivore[i] == this) continue;
+      let d = dist(this.x, this.y, herbivore[i].x, herbivore[i].y);
+      if (d < recordDistance) {
+        recordDistance = d;
+        closestHerbivore = herbivore[i];
+      }
+    }
+    return closestHerbivore;
   }
 }
-
