@@ -27,7 +27,7 @@ function setup() {
 
   for (let i = 0; i < 4; i++) {
     
-    weedEaterArray.push(new Herbivore(random(0, width - 200), random(0, height), 10, 10, 1, i));
+    weedEaterArray.push(new Herbivore(random(0, width - 200), random(0, height), 10, 10, 0.5, i));
   }
 
   let placed = 0;
@@ -195,17 +195,17 @@ function checkEndGame() {
 function getColor(x, y){
   let v = noise(x * scl, y * scl);
   if(v < 0.4) {
-    return color(204, 255, 255);
+    return color(204, 255, v*255+50);
   } 
   else if(v < 0.47) {
-    return color(61, 255, 150);
+    return color(61, 255, v*255+100);
   }
   else if(v < 0.7) {
-    return color(129, 255, 200);
+    return color(129, 255, v*255+50);
   }
-  //else {
-   // return color(80, 0, 200);
- // }
+  else {
+    return color(80, 0, v*400-50);
+  }
 }
 
 function getNoise(px, py) {
