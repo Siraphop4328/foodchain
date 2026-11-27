@@ -49,7 +49,7 @@ function setup() {
 
   rectMode(CORNER);
 
-  for (let i = 0; i < width / tileSize; i++) {
+  for (let i = 0; i < (width - 190) / tileSize; i++) {
     for (let j = 0; j < height / tileSize; j++) {
       mapLayer.fill(getColor(i, j));
 
@@ -85,18 +85,15 @@ function draw() {
     text("Time: " + nf(endGameTime, 0, 2) + " s", width - 170, 20);
   }
 
+  text(floor(frameRate()), 10, 20 );
   text("Herb " + weedArray.length, width - 170, 60);
   text("Cow " + weedEaterArray.length, width - 170, 80);
 
   for (let i = 0; i < weedEaterArray.length; i++) {
-    text(
-      weedEaterArray[i].id + " age: " + nf(weedEaterArray[i].age, 0, 1),
-      width - 170,
-      100 + 20 * i
-    );
-    text(floor(weedEaterArray[i].hunger), width - 80, 100 + 20 * i);
-    text(floor(weedEaterArray[i].thirst), width - 80, 200 + 20 * i);
-    text(floor(weedEaterArray[i].horny), width - 80, 300 + 20 * i);
+  
+      
+    
+    
   }
 
   // Spawn Herbs
@@ -129,14 +126,15 @@ function draw() {
     }
   }
 
-  for (let i = weedEaterArray.length - 1; i >= 0; i--) {
-    weedEaterArray[i].update();
+    for (let i = weedEaterArray.length - 1; i >= 0; i--) {
+      weedEaterArray[i].update();
 
-    if (weedEaterArray[i].checkDeath()) {
-      weedEaterArray.splice(i, 1);
+      if (weedEaterArray[i].checkDeath()) {
+        weedEaterArray.splice(i, 1);
+      }
     }
   }
-}
+
 
 function checkCollision(ax, ay, bx, by) {
   let d = dist(ax, ay, bx, by);
@@ -234,13 +232,13 @@ function sortPriority(eater) {
     if (isWater(eater.x, eater.y)) {
       eater.lastDrinkTime = simTime;
     }
-  } else if (eater.age > 10) {
+  } else if(eater.age > 10){
     let mate = eater.findClosestHerbivore(weedEaterArray);
     if (mate != null) {
       eater.moveToTarget(mate.x, mate.y);
       if (isCloseToMate(eater, mate)) {
         weedEaterArray.push(
-          new Herbivore(eater.x + 20, eater.y, 10, 10, 0.5, nextHerbivoreId++)
+          new Herbivore(eater.x+20, eater.y, 10, 10, 0.5, nextHerbivoreId++)
         );
         eater.lastHornyTime = simTime;
         mate.lastHornyTime = simTime;
