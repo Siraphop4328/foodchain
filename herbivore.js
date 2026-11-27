@@ -23,20 +23,26 @@ class Herbivore {
     let scaleFactorSize = map(this.hunger, 0, 100, 1, 0.2);
     scaleFactorSize = constrain(scaleFactorSize, 0.2, 1);
 
-    let cowColor = map(this.thirst, 0, 100, 255, 0);
+    
+    
 
     this.r2 = this.baseR2 * scaleFactorSize;
-    this.color = cowColor;
+   // this.color = cowColor;
 
+    
     if (
       this.horny > this.thirst &&
       this.horny >= this.hunger &&
       this.age > 10
     ) {
-      fill(319, 255, 255);
-    } else {
-      fill(cowColor);
+      fill(300, 255, 255);
+    } else if(this.hunger > this.thirst && this.hunger >= this.horny) {
+      fill(100, 255, 255);
     }
+    else{
+      fill(200, 255, 255);
+    }
+    
     ellipse(this.x, this.y, this.r1 * 2, this.r2 * 2);
   }
   moveToTarget(targetX, targetY) {
