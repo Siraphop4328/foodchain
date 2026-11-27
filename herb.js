@@ -11,12 +11,12 @@ class Herb {
   }
 
   spawn() {
-    
-    let half = this.startSize * 0.5;
+    push();
+    rectMode(CENTER);
     noStroke();
     fill(120, 255, 100);
-    rect(this.x - half, this.y - half, this.startSize, this.startSize);
-    
+    rect(this.x, this.y, this.startSize);
+    pop();
   }
 
   regrow() {

@@ -1,3 +1,4 @@
+<!-- noprotect -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -8,10 +9,47 @@
     <meta charset="utf-8" />
   </head>
   <body>
+    <div id="settings">
+      Herbs
+      <input
+        type="number"
+        id="herbInput"
+        value="20"
+        min="0"
+        style="width: 60px"
+      /><br />
+      Cows
+      <input
+        type="number"
+        id="cowInput"
+        value="4"
+        min="0"
+        style="width: 60px"
+      /><br />
+      Humans
+      <input
+        type="number"
+        id="humanInput"
+        value="2"
+        min="0"
+        style="width: 60px"
+      /><br />
+      <button id="applyBtn">Apply / Restart</button>
+
+      <style>
+        #settings {
+          position: absolute;
+          right: 10px;
+          top: 130px;
+          z-index: 10;
+          color: white;
+        }
+      </style>
+    </div>
     <main></main>
     <script src="sketch.js"></script>
-    <script src ="herbivore.js"></script>
-    <script src ="herb.js"></script>
-    </script>
+    <script src="herb.js"></script>
+    <script src="herbivore.js"></script>
+    <script src="carnivore.js"></script>
   </body>
 </html>

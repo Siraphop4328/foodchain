@@ -20,35 +20,39 @@ class Herbivore {
   }
 
   spawn() {
-    
     let scaleFactorSize = map(this.hunger, 0, 100, 1, 0.2);
     scaleFactorSize = constrain(scaleFactorSize, 0.2, 1);
 
-    let cowColor = map(this.thirst, 0, 100, 255, 0);
+    
+    
 
     this.r2 = this.baseR2 * scaleFactorSize;
-    this.color = cowColor;
+   // this.color = cowColor;
 
+    
     if (
       this.horny > this.thirst &&
       this.horny >= this.hunger &&
       this.age > 10
     ) {
-      fill(319, 255, 255);
-    } else {
-      fill(cowColor);
+      fill(300, 255, 255);
+    } else if(this.hunger > this.thirst && this.hunger >= this.horny) {
+      fill(100, 255, 255);
     }
+    else{
+      fill(200, 255, 255);
+    }
+    
     ellipse(this.x, this.y, this.r1 * 2, this.r2 * 2);
   }
-
   moveToTarget(targetX, targetY) {
-    
+    let dx = targetX - this.x;
+    let dy = targetY - this.y;
     let d = dist(this.x, this.y, targetX, targetY);
+
     if (d > 1) {
-      let step = min(this.speed * dt, d);
-      this.x += (targetX - this.x) / d * step;
-      this.y += (targetY - this.y) / d * step;
-      
+      this.x += (dx / d) * this.speed;
+      this.y += (dy / d) * this.speed;
     }
   }
 
@@ -65,17 +69,14 @@ class Herbivore {
 
   findClosestHerb(herbs) {
     let closestHerb = null;
-    let bestDistSq = Infinity;
+    let recordDistance = Infinity;
 
     for (let i = 0; i < herbs.length; i++) {
-      let dx = herbs[i].x - this.x;
-      let dy = herbs[i].y - this.y;
-      let dSq = dx * dx + dy * dy;
-      if(dSq < bestDistSq){
-        bestDistSq = dSq;
+      let d = dist(this.x, this.y, herbs[i].x, herbs[i].y);
+      if (d < recordDistance) {
+        recordDistance = d;
         closestHerb = herbs[i];
       }
-     
     }
     return closestHerb;
   }
