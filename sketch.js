@@ -18,19 +18,13 @@ let mapLayer;
 
 let waterTiles = [];
 
-
-// SETTINGS
-let startHerbCount = 10;
-let startCowCount = 4;
-let startHumanCount = 2;
-
 function setup() {
   createCanvas(windowWidth, windowHeight);
   rectMode(CORNER);
   colorMode(HSB, 360, 255, 255);
   frameRate(60);
 
-  for (let i = 0; i < startCowCount; i++) {
+  for (let i = 0; i < 4; i++) {
     weedEaterArray.push(
       new Herbivore(random(0, width - 200), random(0, height), 10, 10, 0.5, i)
     );
@@ -39,7 +33,7 @@ function setup() {
   let placed = 0;
   let tries = 0;
 
-  while (placed < startHerbCount && tries < 5000) {
+  while (placed < 25 && tries < 5000) {
     tries++;
     let p = randomGreenPos();
     if (!isOccupied(p.x, p.y)) {
@@ -48,9 +42,9 @@ function setup() {
     }
   }
 
-  for (let i = 0; i < startHumanCount; i++) {
+  for (let i = 0; i < 2; i++) {
     weedEaterEaterArray.push(
-      new Carnivore(random(0, width - 200), random(0, height), 10, 10, 0.55, i)
+      new Carnivore(random(0, width - 200), random(0, height), 10, 10, 0)
     );
   }
 
@@ -101,8 +95,7 @@ function draw() {
   text(floor(frameRate()), 10, 20);
   text("Herb " + weedArray.length, width - 170, 60);
   text("Cow " + weedEaterArray.length, width - 170, 80);
-  text("Human " + weedEaterEaterArray.length, width - 170, 100);
-  
+
   for (let i = 0; i < weedEaterArray.length; i++) {}
 
   // Spawn Herbs
@@ -142,36 +135,14 @@ function draw() {
       weedEaterArray.splice(i, 1);
     }
   }
-
   // Spawn Carnivore
   for (let i = 0; i < weedEaterEaterArray.length; i++) {
-    
+    sortPriority(weedEaterEaterArray[i]);
     weedEaterEaterArray[i].update();
 
     weedEaterEaterArray[i].spawn();
-    sortCarnivorePriority(weedEaterEaterArray[i]);
-
-    for (let j = weedEaterArray.length - 1; j >= 0; j--) {
-      let currentHerbivore = weedEaterArray[j];
-
-      if (checkCollision(weedEaterEaterArray.x, weedEaterEaterArray.y, currentHerbivore.x, currentHerbivore.y)) {
-        console.log("Human " + weedEaterEaterArray.id + " ate cow " + currentHerbivore.id);
-
-        weedEaterArray.splice(j, 1);
-        weedEaterEaterArray.lastEatTime = min(simTime, weedEaterEaterArray.lastEatTime + 2);
-      }
-    }
   }
-  for (let i = weedEaterEaterArray.length - 1; i >= 0; i--) {
-      
-  
-      if (weedEaterEaterArray[i].checkDeath()) {
-        weedEaterEaterArray.splice(i, 1);
-      }
-    }
 }
-
-
 
 function checkCollision(ax, ay, bx, by) {
   let d = dist(ax, ay, bx, by);
@@ -179,7 +150,7 @@ function checkCollision(ax, ay, bx, by) {
 }
 
 function checkEndGame() {
-  return weedEaterArray.length < 1 && weedEaterEaterArray.length < 1;
+  return weedEaterArray.length < 1;
 }
 
 function getColor(x, y) {
@@ -282,43 +253,6 @@ function sortPriority(eater) {
       }
     }
   }
-}
-
-function sortCarnivorePriority(eater) {
-  if (eater.hunger > eater.thirst && eater.hunger >= eater.horny) {
-    if (weedEaterArray.length > 0) {
-      let closest = eater.findClosestHerbivore(weedEaterArray);
-      if (closest != null){
-        eater.moveToTarget(closest.x, closest.y);
-
-        if(checkCollision(eater.x, eater.y, closest.x, closest.y)){
-          let idx = weedEaterArray.indexOf(closest);
-          if(idx !== -1) weedEaterArray.splice(idx, 1);
-          eater.lastEatTime = simTime;
-        }
-        
-      } 
-    }
-  } else if (eater.thirst > eater.hunger && eater.thirst >= eater.horny) {
-    let water = findClosestWater(eater.x, eater.y);
-    if (water != null) eater.moveToTarget(water.x, water.y);
-    if (isWater(eater.x, eater.y)) {
-      eater.lastDrinkTime = simTime;
-    }
-    
-  } else if (eater.age > 60) {
-    
-    let mate = eater.findClosestHerbivore(weedEaterEaterArray);
-    if (mate != null) {
-      eater.moveToTarget(mate.x, mate.y);
-      if (isCloseToMate(eater, mate)) {
-        weedEaterEaterArray.push(new Carnivore(eater.x + 10, eater.y, 10, 10, 0.55, 0));
-        eater.lastHornyTime = simTime;
-        mate.lastHornyTime = simTime;
-      }
-    }
-  }
-  
 }
 
 function isCloseToMate(eater, mate) {
