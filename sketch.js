@@ -2,6 +2,15 @@ let weedEaterArray = [];
 let weedArray = [];
 let weedEaterEaterArray = [];
 
+let startMillis = 0;
+
+let uiImg;
+
+function preLoad(){
+  uiImg = loadImage("coclor.png");
+  uiImg2 = loadImage("coclor2.png");
+}
+
 let simTime = 0;
 let day = simTime / 60;
 
@@ -24,11 +33,14 @@ let startHerbCount = 20;
 let startCowCount = 4;
 let startHumanCount = 2;
 
-function setup() {
+async function setup() {
   createCanvas(windowWidth, windowHeight);
   rectMode(CORNER);
   colorMode(HSB, 360, 255, 255);
   frameRate(60);
+
+  uiImg = await loadImage("coclor.png");
+  uiImg2 = await loadImage("coclor2.png");
 
   // html thing
   document.getElementById("applyBtn").addEventListener("click", () => {
@@ -88,7 +100,7 @@ function draw() {
   // Map
 
   image(mapLayer, 0, 0);
-  simTime = millis() / 1000;
+  simTime = (millis() - startMillis ) / 1000;
 
 
   // Make UI
@@ -112,6 +124,11 @@ function draw() {
   text("Herb " + weedArray.length, width - 170, 60);
   text("Cow " + weedEaterArray.length, width - 170, 80);
   text("Human " + weedEaterEaterArray.length, width - 170, 100);
+
+  image(uiImg, width-175, 500, 250, 250);
+  image(uiImg2, width-175, 300, 175, 200);
+
+ 
   
   for (let i = 0; i < weedEaterArray.length; i++) {}
 
@@ -340,9 +357,12 @@ function isCloseToMate(eater, mate) {
 }
 
 function resetSim(){
+  startMillis = millis();
+  simTime = 0;
   weedArray = [];
   weedEaterArray = [];
   weedEaterEaterArray = [];
+  
   showSimTime = true;
 
   for(let i = 0; i < startCowCount; i++){
@@ -366,3 +386,4 @@ function resetSim(){
     );
   }
 }
+

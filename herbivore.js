@@ -96,6 +96,3 @@ class Herbivore {
     return closestHerbivore;
   }
 }
-
-
-
